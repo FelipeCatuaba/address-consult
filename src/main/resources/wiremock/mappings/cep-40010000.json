@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/ws/40010000/json"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "cep": "40010-000",
+      "logradouro": "Avenida Sete de Setembro",
+      "complemento": "de 1 a 999 - lado impar",
+      "bairro": "Centro",
+      "localidade": "Salvador",
+      "uf": "BA"
+    }
+  }
+}

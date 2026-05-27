@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/ws/30140071/json"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "cep": "30140-071",
+      "logradouro": "Avenida Afonso Pena",
+      "complemento": "de 701 a 1399 - lado impar",
+      "bairro": "Centro",
+      "localidade": "Belo Horizonte",
+      "uf": "MG"
+    }
+  }
+}
