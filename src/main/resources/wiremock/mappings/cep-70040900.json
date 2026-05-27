@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/ws/70040900/json"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "cep": "70040-900",
+      "logradouro": "Praca dos Tres Poderes",
+      "complemento": "Palacio do Planalto",
+      "bairro": "Zona Civico-Administrativa",
+      "localidade": "Brasilia",
+      "uf": "DF"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/ws/01310930/json"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "cep": "01310-930",
+      "logradouro": "Avenida Paulista",
+      "complemento": "de 901 a 1501 - lado impar",
+      "bairro": "Bela Vista",
+      "localidade": "Sao Paulo",
+      "uf": "SP"
+    }
+  }
+}
