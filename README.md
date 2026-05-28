@@ -62,13 +62,3 @@ select id, cep_consultado, data_hora_consulta, cep_retornado, localidade, uf
 from cep_consult_log
 order by data_hora_consulta desc;
 ```
-
-## Roteiro de apresentacao (15 min)
-1. Contexto e objetivo da aplicacao (1 min).
-2. Desenho da solucao e fluxo da consulta (3 min).
-3. Estrutura do codigo e SOLID (4 min).
-4. Subida dos containers e aplicacao (3 min).
-5. Chamada do endpoint e validacao no banco (4 min).
-
-## Prazo do desafio
-O enunciado cita finalizacao ate **05/05/2026**. Como hoje ja e **27/05/2026**, vale enviar o repositorio publico no Git o quanto antes e alinhar no email a data real de entrega.
