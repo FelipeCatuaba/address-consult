@@ -66,7 +66,10 @@ jobs:
             fi
 
             if ! docker compose version >/dev/null 2>&1; then
-              sudo dnf install -y docker-compose-plugin
+              sudo mkdir -p /usr/local/lib/docker/cli-plugins
+              sudo curl -SL "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" \
+                -o /usr/local/lib/docker/cli-plugins/docker-compose
+              sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
             fi
 
             aws secretsmanager get-secret-value \
@@ -89,13 +92,6 @@ jobs:
             . ./.env.ec2
             set +a
 
-            if docker compose version >/dev/null 2>&1; then
-              docker compose pull app
-              docker compose up -d
-            elif command -v docker-compose >/dev/null 2>&1; then
-              docker-compose pull app
-              docker-compose up -d
-            else
-              echo "Docker Compose is not installed on EC2"
-              exit 1
-            fi
+            docker compose version
+            docker compose pull app
+            docker compose up -d
