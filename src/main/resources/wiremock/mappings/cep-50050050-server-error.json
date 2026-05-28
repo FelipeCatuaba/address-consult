@@ -1,15 +1,15 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/ws/99999999/json"
+    "urlPathPattern": "/ws/50050050/json"
   },
   "response": {
-    "status": 404,
+    "status": 500,
     "headers": {
       "Content-Type": "application/json"
     },
     "jsonBody": {
-      "message": "CEP nao encontrado"
+      "message": "Erro interno no provedor de CEP"
     }
   }
 }

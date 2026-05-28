@@ -1,13 +1,15 @@
 package com.consult.address.address_consult.service.impl;
 
 import com.consult.address.address_consult.domain.CepConsultLog;
+import com.consult.address.address_consult.dto.CepConsultLogPageResponse;
 import com.consult.address.address_consult.dto.CepConsultLogResponse;
 import com.consult.address.address_consult.dto.CepResponse;
 import com.consult.address.address_consult.external.CepExternalClient;
 import com.consult.address.address_consult.repository.CepConsultLogRepository;
 import com.consult.address.address_consult.service.CepConsultService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,9 +33,20 @@ public class CepConsultServiceImpl implements CepConsultService {
     }
 
     @Override
-    public Page<CepConsultLogResponse> listConsultLogs(Pageable pageable) {
-        return cepConsultLogRepository.findAll(pageable)
+    public CepConsultLogPageResponse listConsultLogs(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataHoraConsulta"));
+        Page<CepConsultLogResponse> logsPage = cepConsultLogRepository.findAll(pageRequest)
                 .map(this::toResponse);
+
+        Integer proximaPagina = logsPage.hasNext() ? page + 1 : null;
+
+        return new CepConsultLogPageResponse(
+                logsPage.getTotalElements(),
+                logsPage.getNumberOfElements(),
+                page,
+                proximaPagina,
+                logsPage.getContent()
+        );
     }
 
     private void saveConsultLog(String cep, CepResponse response) {

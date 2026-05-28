@@ -1,0 +1,43 @@
+﻿services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: address-consult-app
+    depends_on:
+      - postgres
+      - wiremock
+    environment:
+      DB_HOST: postgres
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-address_consult}
+      DB_USERNAME: ${DB_USERNAME:-address_user}
+      DB_PASSWORD: ${DB_PASSWORD:-address_pass}
+      WM_HOST: wiremock
+      WM_PORT: 8080
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: address-consult-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-address_consult}
+      POSTGRES_USER: ${DB_USERNAME:-address_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-address_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  wiremock:
+    image: wiremock/wiremock:3.9.1
+    container_name: address-consult-wiremock
+    command: ["--verbose"]
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./src/main/resources/wiremock/mappings:/home/wiremock/mappings
+
+volumes:
+  postgres_data:
