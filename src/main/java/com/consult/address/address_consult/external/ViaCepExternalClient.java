@@ -17,11 +17,13 @@ public class ViaCepExternalClient implements CepExternalClient {
 
     @Override
     public CepResponse getAddressByCep(String cep) {
-        return restClient
+        ViaCepResponse viaCepResponse = restClient
                 .get()
                 .uri("/ws/{cep}/json", cep)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .body(CepResponse.class);
+                .body(ViaCepResponse.class);
+
+        return viaCepResponse.toCepResponse();
     }
 }
