@@ -1,43 +1,78 @@
-﻿services:
+services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${APP_IMAGE:-seu-usuario-dockerhub/address-consult}:${APP_TAG:-latest}
     container_name: address-consult-app
+    restart: unless-stopped
     depends_on:
-      - postgres
-      - wiremock
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      wiremock:
+        condition: service_started
     environment:
+      SPRING_PROFILES_ACTIVE: compose
       DB_HOST: postgres
-      DB_PORT: ${DB_PORT:-5432}
-      DB_NAME: ${DB_NAME:-address_consult}
-      DB_USERNAME: ${DB_USERNAME:-address_user}
-      DB_PASSWORD: ${DB_PASSWORD:-address_pass}
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       WM_HOST: wiremock
       WM_PORT: 8080
     ports:
-      - "8080:8080"
+      - "${APP_PORT:-8080}:8080"
+    networks:
+      - backend
 
   postgres:
     image: postgres:16-alpine
     container_name: address-consult-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME:-address_consult}
-      POSTGRES_USER: ${DB_USERNAME:-address_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-address_pass}
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    container_name: address-consult-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
 
   wiremock:
     image: wiremock/wiremock:3.9.1
     container_name: address-consult-wiremock
+    restart: unless-stopped
     command: ["--verbose"]
-    ports:
-      - "8081:8080"
     volumes:
-      - ./src/main/resources/wiremock/mappings:/home/wiremock/mappings
+      - ./src/main/resources/wiremock/mappings:/home/wiremock/mappings:ro
+    networks:
+      - backend
 
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  backend:
+    driver: bridge
