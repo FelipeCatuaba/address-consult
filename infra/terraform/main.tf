@@ -2,10 +2,15 @@ data "aws_vpc" "default" {
   default = true
 }
 
-data "aws_subnets" "default" {
+data "aws_subnets" "public" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
+  }
+
+  filter {
+    name   = "map-public-ip-on-launch"
+    values = ["true"]
   }
 }
 
@@ -62,7 +67,7 @@ resource "aws_security_group" "app_sg" {
 resource "aws_instance" "app" {
   ami                         = data.aws_ami.amazon_linux_2023.id
   instance_type               = var.instance_type
-  subnet_id                   = data.aws_subnets.default.ids[0]
+  subnet_id                   = data.aws_subnets.public.ids[0]
   key_name                    = var.key_name
   vpc_security_group_ids      = [aws_security_group.app_sg.id]
   associate_public_ip_address = true
