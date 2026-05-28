@@ -1,5 +1,6 @@
 package com.consult.address.address_consult.service.impl;
 
+import com.consult.address.address_consult.cache.CepCacheRepository;
 import com.consult.address.address_consult.domain.CepConsultLog;
 import com.consult.address.address_consult.dto.CepConsultLogPageResponse;
 import com.consult.address.address_consult.dto.CepConsultLogResponse;
@@ -18,17 +19,30 @@ import java.time.LocalDateTime;
 public class CepConsultServiceImpl implements CepConsultService {
 
     private final CepExternalClient cepExternalClient;
+    private final CepCacheRepository cepCacheRepository;
     private final CepConsultLogRepository cepConsultLogRepository;
 
-    public CepConsultServiceImpl(CepExternalClient cepExternalClient, CepConsultLogRepository cepConsultLogRepository) {
+    public CepConsultServiceImpl(
+            CepExternalClient cepExternalClient,
+            CepCacheRepository cepCacheRepository,
+            CepConsultLogRepository cepConsultLogRepository) {
         this.cepExternalClient = cepExternalClient;
+        this.cepCacheRepository = cepCacheRepository;
         this.cepConsultLogRepository = cepConsultLogRepository;
     }
 
     @Override
     public CepResponse consultCep(String cep) {
-        CepResponse response = cepExternalClient.getAddressByCep(cep);
+        CepResponse response = cepCacheRepository.findByCep(cep)
+                .orElseGet(() -> getAndCacheExternalAddress(cep));
+
         saveConsultLog(cep, response);
+        return response;
+    }
+
+    private CepResponse getAndCacheExternalAddress(String cep) {
+        CepResponse response = cepExternalClient.getAddressByCep(cep);
+        cepCacheRepository.save(cep, response);
         return response;
     }
 
