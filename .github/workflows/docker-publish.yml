@@ -65,6 +65,10 @@ jobs:
               sudo dnf install -y jq
             fi
 
+            if ! docker compose version >/dev/null 2>&1; then
+              sudo dnf install -y docker-compose-plugin
+            fi
+
             aws secretsmanager get-secret-value \
               --secret-id "${{ secrets.EC2_APP_SECRET_ID }}" \
               --region "${{ secrets.AWS_REGION }}" \
