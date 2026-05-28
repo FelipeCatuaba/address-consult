@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: ["Publish Docker Image"]
     types: [completed]
+    branches: [master]
   workflow_dispatch:
 
 concurrency:
@@ -14,8 +15,7 @@ jobs:
   deploy:
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'master')
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
